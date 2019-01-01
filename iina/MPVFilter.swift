@@ -109,7 +109,20 @@ class MPVFilter: NSObject {
     self.type = FilterType(rawValue: name)
     self.name = name
     self.label = label
-    self.params = params
+    let format = MPVFilter.formats[type!]!.components(separatedBy: ":")
+    var translated: [String: String] = [:]
+    if let params = params {
+      for (key, value) in params {
+        if let number = Int(key.dropFirst()) {
+          translated[format[number]] = value
+        } else {
+          translated[key] = value
+        }
+      }
+      self.params = translated
+    } else {
+      self.params = nil
+    }
   }
 
   init?(rawString: String) {
